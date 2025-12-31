@@ -17,4 +17,6 @@ https://huggingface.co/Qwen/Qwen-Image-Layered
 
 然后 uv pip install transformers
 
+然后 uv pip install accelerate
+
 最后，启动虚拟环境，把GUI.py放到项目目录里，拖动py文件到激活虚拟环境的cmd窗口回车运行，好好享受！
