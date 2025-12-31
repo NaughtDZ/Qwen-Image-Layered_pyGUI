@@ -20,3 +20,5 @@ https://huggingface.co/Qwen/Qwen-Image-Layered
 然后 uv pip install accelerate
 
 最后，启动虚拟环境，把GUI.py放到项目目录里，拖动py文件到激活虚拟环境的cmd窗口回车运行，好好享受！
+
+注意，初次运行会从huggingface下载模型，注意网络环境。同时额外提一句，建议各位把C盘的huggingface缓存换个盘存，然后mklink软链接回去，节约C盘空间！
