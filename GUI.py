@@ -105,32 +105,30 @@ class ImageLayeredGUI:
     def load_pipeline(self):
         try:
             messagebox.showinfo("加载模型", "正在加载官方 Qwen-Image-Layered（bf16版，首次~57GB）...\n"
-                                            "已自动启用多项显存优化，适合32GB显存")
+                                            "当前版本暂不支持内置 offload/slicing，靠参数控制显存")
             self.pipeline = QwenImageLayeredPipeline.from_pretrained(
-                "Qwen/Qwen-Image-Layered",  # 官方完整仓库
+                "Qwen/Qwen-Image-Layered",
                 torch_dtype=torch.bfloat16
             )
             if torch.cuda.is_available():
                 self.pipeline.to("cuda")
 
-            # === 关键显存优化（强烈推荐全部开启）===
-            self.pipeline.enable_model_cpu_offload()       # 最有效：模型层动态在CPU/GPU间切换，显存大幅降低（推荐首选）
-            # 如果还爆显存，可取消上面一行，改用下面这行（更省但更慢）：
-            # self.pipeline.enable_sequential_cpu_offload()
-
-            self.pipeline.enable_vae_slicing()             # VAE 分片，省一点
-            # self.pipeline.enable_attention_slicing()     # Attention 分片，进一步省（可略微影响速度）
+            # 官方只支持这个（可选关闭进度条加速）
+            # self.pipeline.set_progress_bar_config(disable=True)
 
             messagebox.showinfo("成功", "模型加载完成！\n"
-                                        "已启用 CPU offload 等优化，你的32GB显存应该够用了～\n"
-                                        "建议：resolution=640 + 缩放0.6~0.8 更稳")
+                                        "显存提示：\n"
+                                        "- 必须用 resolution=640\n"
+                                        "- 缩放建议 0.5~0.8\n"
+                                        "- layers ≤6，steps ≤40\n"
+                                        "这样你的32GB显存绝对够用～")
         except Exception as e:
             messagebox.showerror("加载失败", f"出错：{str(e)}\n\n"
-                                            "请确认已安装最新版：\n"
+                                            "请确保：\n"
                                             "pip install git+https://github.com/huggingface/diffusers\n"
-                                            "pip install -U transformers accelerate")
+                                            "pip install -U transformers accelerate python-pptx")
             self.root.quit()
-
+			
     def browse_image(self):
         file_path = filedialog.askopenfilename(filetypes=[("图片文件", "*.png *.jpg *.jpeg *.bmp *.webp *.tiff")])
         if file_path:
